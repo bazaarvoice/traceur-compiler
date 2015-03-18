@@ -6,8 +6,9 @@
   
   // NOTE:
   // Kenney Wong
-  // Patch to support node-style require() for ES5 modules
-  global.require = function(){};
+  // Patch to work-around not defined errors during compilation of nodejs code
+  global.require = null;
+  global.__dirname = null;
   
   var $Object = Object;
   var $TypeError = TypeError;
