@@ -12,15 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-function get(name) {
-  return $traceurRuntime.ModuleStore.getForTesting(name);
-}
-
-var resolveUrl = get('src/util/url.js').resolveUrl;
+import {resolveUrl} from '../../src/util/url.js';
 
 var url;
 var fileLoader;
-if (typeof __filename !== 'undefined') {  // Node
+if (typeof window === 'undefined') {  // Node
   // TOD(arv): Make the system work better with file paths, especially
   // Windows file paths.
   url = process.cwd().replace(/\\/g, '/') + '/test/unit/runtime/';

@@ -24,6 +24,7 @@ INDIVIDUAL_RUNTIME_MODULES = \
   src/runtime/classes.js \
   src/runtime/generators.js \
   src/runtime/async.js \
+  src/runtime/template.js \
   src/runtime/type-assertions.js \
   #end runtime modules
 SRC = \
@@ -68,7 +69,7 @@ TESTS = \
 	# End Node tests.
 
 MOCHA_OPTIONS = \
-	--ignore-leaks --ui tdd --require test/node-env.js
+	--ignore-leaks --ui tdd --reporter dot --require test/node-env.js
 
 ifdef ONLY
 	MOCHA_OPTIONS := $(MOCHA_OPTIONS) --grep $(ONLY)
@@ -122,13 +123,13 @@ test-list: test/test-list.js
 test/test-list.js: force
 	@git ls-files -o -c test/feature | node build/build-test-list.js > $@
 
-test-interpret: test/unit/runtime/traceur-interpreter.js
+test-interpret: test/unit/node/traceur-interpreter.js
 	./traceur $^
 
 test-interpret-throw: test/unit/runtime/resources/throwsError.js
 	./traceur $^ 2>&1 | grep 'ModuleEvaluationError' | wc -l | grep '1'
 
-test-interpret-absolute: $(CURDIR)/test/unit/runtime/traceur-interpreter.js
+test-interpret-absolute: $(CURDIR)/test/unit/node/traceur-interpreter.js
 	./traceur $^
 
 test-inline-module-error:
@@ -200,7 +201,7 @@ concat: bin/traceur-runtime.js bin/traceur-bare.js
 
 bin/traceur.js: build/compiled-by-previous-traceur.js $(SRC_NODE)
 	@cp $< $@; touch -t 197001010000.00 bin/traceur.js
-	./traceur --out bin/traceur.js --referrer='traceur@$(PACKAGE_VERSION)/bin/' \
+	./traceur --source-maps=file --out bin/traceur.js --referrer='traceur@$(PACKAGE_VERSION)/bin/' \
 	  $(RUNTIME_SCRIPTS) $(TFLAGS) $(SRC)
 
 # Use last-known-good compiler to compile current source
@@ -209,8 +210,8 @@ build/compiled-by-previous-traceur.js: \
 		$(SRC) \
 	  node_modules/traceur/bin/traceur.js $(SRC_ALL) $(GENSRC) node_modules
 	@mkdir -p bin/
-	node_modules/traceur/traceur --out $@  --referrer='traceur@0.0.0/build/' \
-	  $(RUNTIME_SCRIPTS) $(TFLAGS)  $(SRC)
+	node_modules/traceur/traceur --out $@ --referrer='traceur@0.0.0/build/' \
+	  $(RUNTIME_SCRIPTS) $(TFLAGS) $(SRC)
 
 debug: build/compiled-by-previous-traceur.js $(SRC)
 	./traceur --debug --out bin/traceur.js --sourcemap $(RUNTIME_SCRIPTS) $(TFLAGS) $(SRC)

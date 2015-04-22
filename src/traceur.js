@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export {System} from './runtime/System.js';
-
 // Used by unit tests only
 import './util/MutedErrorReporter.js';
 
@@ -94,12 +92,18 @@ export let codegeneration = {
 
 import {Loader} from './runtime/Loader.js';
 import {LoaderCompiler} from './runtime/LoaderCompiler.js';
+import {BrowserTraceurLoader} from './runtime/TraceurLoader.js';
+import {NodeLoaderCompiler} from './node/NodeLoaderCompiler.js';
 import {InlineLoaderCompiler} from './runtime/InlineLoaderCompiler.js';
+import {NodeTraceurLoader} from './runtime/NodeTraceurLoader.js';
 import {TraceurLoader} from './runtime/TraceurLoader.js';
 
 export let runtime = {
+  BrowserTraceurLoader,
   InlineLoaderCompiler,
   Loader,
   LoaderCompiler,
+  NodeLoaderCompiler,
+  NodeTraceurLoader,
   TraceurLoader
 };
